@@ -18,7 +18,7 @@
   <div class="page-header">
           <div class="container">
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-              <a href="#" class="navbar-brand">BLogo</a>
+              <a href="/" class="navbar-brand">BLogo</a>
               <button class="navbar-toggler" data-target="#navigation" data-control="navigation" data-toggle="collapse">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -32,7 +32,7 @@
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="preview" href="#" role="button" aria-haspopup="true" aria-expanded="false">Categories</a>
                     <div class="dropdown-menu" aria-lableledby="preview">
                       {% for cat in categories%}
-                      <a class="dropdown-item" href="#">{{ cat.name }}</a>
+                      <a class="dropdown-item" href="{{ cat.get_absolute_url }}">{{ cat.name }}</a>
                       {% endfor %}
                     </div>
                   </li>
@@ -61,6 +61,12 @@
                       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                           <!-- jinja should be here -->
                           {% block content %}
+                          <div class="section-title mb-0" align="center">
+                            <h2>Make your dreams come true</h2>
+                            <p>
+                              Our approach is very simple: we define your problem and give the best solution. 
+                            </p>
+                          </div>
                           {% endblock %}
                           <!-- jinja should be here -->
                       </div>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 # Create your models here.
 
@@ -9,6 +10,10 @@ class Category(models.Model):
 
 	def __str__(self):
 		return self.name
+
+	def get_abdolute_url(self):
+		return reverse('category_detail', kwargs = {'slug' :self.slug})
+
 
 def generate_filename(instance, filename):
 	filename = instance.slug + '.jpg'
@@ -30,5 +35,11 @@ class Post(models.Model):
 
 	def __str__(self):
 		return self.title
+
+	def text_preview(self):
+		return self.text[:300] + '...'
+
+	def get_abdolute_url(self):
+		return reverse('post_detail', kwargs = {'slug' :self.slug})
 
 
