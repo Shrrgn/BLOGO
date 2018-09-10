@@ -7,6 +7,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 # Create your models here.
 
 class Category(models.Model):
+	
 	name = models.CharField(max_length = 20, unique = True)
 	slug = models.SlugField()
 
@@ -22,6 +23,7 @@ def generate_filename(instance, filename):
 	return f"{instance}/{filename}"
 
 class Post(models.Model):
+	
 	title = models.CharField(max_length = 100)
 	date_published = models.DateTimeField(auto_now_add = True)
 	slug = models.SlugField()
@@ -47,6 +49,7 @@ class Post(models.Model):
 		return reverse('post_detail', kwargs = {'slug' :self.slug})
 
 class Comments(models.Model):
+	
 	author = models.ForeignKey('auth.User', on_delete = models.CASCADE)
 	comment = models.CharField(max_length = 140)
 	timestamp = models.DateTimeField(auto_now_add = True, auto_now = False)
@@ -54,3 +57,17 @@ class Comments(models.Model):
 	object_id = models.PositiveIntegerField()
 	content_type = models.ForeignKey(ContentType, on_delete = models.CASCADE)
 	content_object = GenericForeignKey('content_type', 'object_id')
+
+class UserAccount(models.Model):
+
+	nick = models.OneToOneField('auth.User', on_delete = models.CASCADE)
+	first_name = models.CharField(max_length = 20)
+	last_name = models.CharField(max_length = 30)
+	email = models.EmailField()
+	favorite_posts = models.ManyToManyField(Post)
+
+	def __str__(self):
+		return self.nick.username
+
+	def full_name(self):
+		return f"{first_name} {last_name}"

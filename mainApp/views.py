@@ -1,13 +1,15 @@
 from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from mainApp.models import Category, Post
-from mainApp.forms import CommentForm
+from mainApp.models import Category, Post, UserAccount
+from mainApp.forms import CommentForm, RegisrationForm
 from django.views.generic.base import View
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
+from django.contrib.auth import get_user_model
 
 # Create your views here.
 
+User = get_user_model()
 
 class CategoryListView(ListView):
 		
@@ -52,7 +54,7 @@ class PostDetailView(DetailView):
 
 class CreateCommentView(View):
 
-	template_name = 'post_detail.html'
+	template_name = 'mainApp/post_detail.html'
 
 	def post(self, request, *args, **kwargs): #posting comment; if i wanna get it than get *GET*
 		post_detail_id = self.request.POST.get('post_detail_id')
@@ -67,7 +69,7 @@ class CreateCommentView(View):
 
 class LikeDislikeView(View):
 
-	template_name = 'post_detail.html'
+	template_name = 'mainApp/post_detail.html'
 
 	def get(self, request, *args, **kwargs):
 		post_detail_id = self.request.GET.get('post_detail_id')
@@ -92,8 +94,54 @@ class LikeDislikeView(View):
 
 		return JsonResponse(data)
 		
+class RegistrationView(View):
 
+	template_name = 'mainApp/registration.html'
+
+	def get(self, request, *args, **kwargs):
+		form = RegisrationForm(request.POST or None)
+		context = {'form':form}
+		return render(self.request, self.template_name, context)
+
+	def post(self, request, *args, **kwargs):
+		form = RegisrationForm(request.POST or None)
+		
+		if form.is_valid():
+			new_user = form.save(commit = False)
+			username = form.cleaned_data['username']
+			password = form.cleaned_data['password']
+			password_check = form.cleaned_data['password_check']
+			new_user.set_password(password)
+			first_name = form.cleaned_data['first_name']
+			last_name = form.cleaned_data['last_name']
+			email = form.cleaned_data['email']
+			new_user.save()
+			UserAccount.objects.create(nick = User.objects.get(username = new_user.username),
+										first_name = new_user.first_name,
+										last_name = new_user.last_name,
+										email = new_user.email)
+		
+			return HttpResponseRedirect('/')
+
+		context = {'form':form}
+		return render(self.request, self.template_name, context)
+
+'''
 def contacts(request): # how to make it better?
 	return render(request, "mainApp/contacts.html", {'values':['Contact name: Harry Potter', 
 																'Address: Hogwarts Castle',
 																'Contact email: harrypotter@ukr.net']})
+'''
+
+class ContactsView(View):
+
+	template_name = "mainApp/contacts.html"
+
+	def get(self, request, *args, **kwargs):
+		context = {
+			'name':'Harry Potter',
+			'address':'Hogwarts Castle',
+			'email':'harrypotter@ukr.net'
+		}
+		return render(self.request, self.template_name, context)
+																
