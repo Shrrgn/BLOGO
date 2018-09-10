@@ -15,10 +15,13 @@
   	</div>
   	<br><br>
 	<h4 align="center">{{ post_detail.title }}</h4><br>
-	<p>{{ post_detail.text }}</p><br><br>
-	<!--Likes icons doesn't show-->
-	<a href="#" id="like"><span class="glyphicon glyphicon-thumbs-up">Fuck</span></a>
-	<a href="#" id="dislike"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="false">you</span></a>
+	<p>{{ post_detail.text }}</p><br>
+	
+	<a href="#" id="like"><span class="glyphicon glyphicon-thumbs-up" style="color: green;"></span></a>
+	<span id="liked">{{ post_detail.likes }}</span>
+	<a href="#" id="dislike" style="padding-left: 25px;"><span class="glyphicon glyphicon-thumbs-down" style="color: red">
+	</span></a><span id="disliked">{{ post_detail.dislikes }}</span>
+	<br><br>
 
 	<h4>Comments:</h4>
 	<hr>
@@ -112,6 +115,56 @@
 								'</p></div></div>')
 								$('#id_comment').val('') 
 						})
+					}
+				})
+			})
+		})
+	</script>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#like').on('click', function(e){
+				e.preventDefault()
+				var like = 'like'
+				var post_detail_id = $('#post').attr('data-id')
+
+				data = {
+					post_detail_id:post_detail_id,
+					like:like
+				}
+
+				$.ajax({
+					type:"GET",
+					url:"{% url 'like_dislike' %}",
+					dataType:"json",
+					data:data,
+					success: function(data){
+						$('#liked').html(data.like)
+						$('#disliked').html(data.dislike)
+					}
+				})
+			})
+		})
+
+		$(document).ready(function(){
+			$('#dislike').on('click', function(e){
+				e.preventDefault()
+				var dislike = 'dislike'
+				var post_detail_id = $('#post').attr('data-id')
+
+				data = {
+					post_detail_id:post_detail_id,
+					dislike:dislike
+				}
+
+				$.ajax({
+					type:"GET",
+					url:"{% url 'like_dislike' %}",
+					dataType:"json",
+					data:data,
+					success: function(data){
+						$('#liked').html(data.like)
+						$('#disliked').html(data.dislike)
 					}
 				})
 			})

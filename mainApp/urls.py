@@ -1,5 +1,7 @@
 from django.urls import path, include, re_path
-from mainApp.views import CategoryListView, CategoryDetailView, PostListView, PostDetailView, CreateCommentView
+from mainApp.views import (CategoryListView, CategoryDetailView, 
+							PostListView, PostDetailView, 
+							CreateCommentView, LikeDislikeView)
 from . import views
 
 urlpatterns = [
@@ -9,4 +11,5 @@ urlpatterns = [
 	path('/category/post/(?P<slug>[-\w]+)/', PostDetailView.as_view(), name = 'post_detail'),
 	path('contacts/', views.contacts, name = 'contacts'),
 	path('add_comment/', CreateCommentView.as_view(), name = 'add_comment'),
+	path('like_dislike/', LikeDislikeView.as_view(), name = 'like_dislike'),
 ]

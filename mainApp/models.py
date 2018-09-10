@@ -32,6 +32,7 @@ class Post(models.Model):
 	user = models.ForeignKey('auth.User', on_delete = models.CASCADE)
 	category = models.ForeignKey('Category', on_delete = models.CASCADE)
 	comments = GenericRelation('comments')
+	reaction = models.ManyToManyField('auth.User', blank = True, related_name = 'user_reaction_for_post')
 
 	class Meta:
 		ordering = ["-date_published"]
