@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
 # Create your models here.
 
@@ -29,6 +31,7 @@ class Post(models.Model):
 	dislikes = models.PositiveIntegerField(default = 0)
 	user = models.ForeignKey('auth.User', on_delete = models.CASCADE)
 	category = models.ForeignKey('Category', on_delete = models.CASCADE)
+	comments = GenericRelation('comments')
 
 	class Meta:
 		ordering = ["-date_published"]
@@ -42,4 +45,11 @@ class Post(models.Model):
 	def get_abdolute_url(self):
 		return reverse('post_detail', kwargs = {'slug' :self.slug})
 
+class Comments(models.Model):
+	author = models.ForeignKey('auth.User', on_delete = models.CASCADE)
+	comment = models.CharField(max_length = 140)
+	timestamp = models.DateTimeField(auto_now_add = True, auto_now = False)
 
+	object_id = models.PositiveIntegerField()
+	content_type = models.ForeignKey(ContentType, on_delete = models.CASCADE)
+	content_object = GenericForeignKey('content_type', 'object_id')
