@@ -3,7 +3,8 @@ from mainApp.views import (CategoryListView, CategoryDetailView,
 							PostListView, PostDetailView, 
 							CreateCommentView, LikeDislikeView,
 							RegistrationView, ContactsView,
-							LoginView, UserAccountView)
+							LoginView, UserAccountView,
+							AddArticleToFavorites)
 from django.contrib.auth import logout
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
@@ -21,4 +22,5 @@ urlpatterns = [
 	path('login/', LoginView.as_view(), name = 'login_page'),
 	path('u/(?P<user>[-\w]+)/', UserAccountView.as_view(), name = 'user_detail'),
 	path('logout/', LogoutView.as_view(next_page = reverse_lazy('wrapper')), name = 'logout_action'),
+	path('add_to_favorites/', AddArticleToFavorites.as_view(), name = 'add_to_favorites'),
 ]

@@ -50,7 +50,6 @@ class PostDetailView(DetailView):
 		context['post'] = self.get_object()
 		context['post_comments'] = self.get_object().comments.all()
 		context['form'] = CommentForm()
-		print(f"{self.request.user} {self.request.user.is_anonymous}")
 		
 		if not self.request.user.is_anonymous:
 			context['current_user'] = UserAccount.objects.get(nick = self.request.user)
@@ -163,9 +162,21 @@ class UserAccountView(View):
 	def get(self, request, *args, **kwargs):
 		user = self.kwargs.get('user')
 		current_user = UserAccount.objects.get(nick = User.objects.get(username = user))
-		print(current_user.email)
+		print(current_user.favorite_posts.all())
 		context = {'current_user':current_user}
 		return render(self.request, self.template_name, context)
+
+class AddArticleToFavorites(View):
+
+	template_name = 'mainApp/post_detail.html'
+
+	def get(self, request, *args, **kwargs):
+		post_detail_slug = self.request.GET.get('post_detail_slug')
+		post = Post.objects.get(slug = post_detail_slug)
+		current_user = UserAccount.objects.get(nick = self.request.user)
+		current_user.favorite_posts.add(post)
+		current_user.save()
+		return JsonResponse({'ok':'ok'})
 
 
 class ContactsView(View):

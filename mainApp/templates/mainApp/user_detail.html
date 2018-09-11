@@ -8,6 +8,15 @@
             <h3>Username: {{ current_user.nick }}</h3>
             <h3>Email: {{ current_user.email }}</h3>
             <h3>Fullname: {{ current_user.full_name }}</h3>
+            <hr>
+            <h3>Favorite posts:</h3>
+            <ul>
+            	{%  for favorite_post in current_user.favorite_posts.all %}
+            		<li>
+            			<a href="{% url 'post_detail' favorite_post.slug %}">{{ favorite_post.title }}</a>
+            		</li>
+            	{% endfor %}
+            </ul>
         </div>
         
         
