@@ -23,6 +23,16 @@
 	</span></a><span id="disliked">{{ post_detail.dislikes }}</span>
 	<br><br>
 
+	<p class="add_to_favorites {{ post_detail.slug }}">
+		{% if not request.user.is_anonymous %}
+			{%  if post_detail in current_user.favorite_posts.all %}
+				<button class="btn btn-disabled">Added to favorites</button>
+			{% else %}
+				<button class="btn btn-danger">Add in favorites</button>
+			{% endif %}
+		{% endif %}
+	</p>
+
 	<h4>Comments:</h4>
 	<hr>
 
@@ -44,6 +54,7 @@
 		</div>
 	{%  endfor %}
 
+	{% if not request.user.is_anonymous %}
 	<div class="col-sm-7 col-sm-offset-2">
 		<form action="" method="POST">
 			<input type="hidden" id="post" data-id="{{ post_detail.id }}">
@@ -52,6 +63,7 @@
 			<input type="submit" value="Add comment" id="add_comment" data-toggle="modal" data-target="#myModal">
 		</form>
 	</div>
+	{% endif %}
 	<!--Doesn't work 'cause server gives error 500-->
 	<div class="modal fade" id="myModal" role="dialog">
 	    <div class="modal-dialog">

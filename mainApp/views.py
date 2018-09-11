@@ -50,6 +50,11 @@ class PostDetailView(DetailView):
 		context['post'] = self.get_object()
 		context['post_comments'] = self.get_object().comments.all()
 		context['form'] = CommentForm()
+		print(f"{self.request.user} {self.request.user.is_anonymous}")
+		
+		if not self.request.user.is_anonymous:
+			context['current_user'] = UserAccount.objects.get(nick = self.request.user)
+
 		return context
 
 class CreateCommentView(View):
