@@ -42,16 +42,25 @@
                     <a href="/contacts" class="nav-link">Contact Us</a>
                   </li>
 
+                  {% if not request.user.is_authenticated %}
                   <li class="nav-item">
-                    <a href="#" class="nav-link">Login</a>
+                    <a href="{% url 'login_page' %}" class="nav-link">Login</a>
                   </li>
                   <li class="nav-item">
                     <a href="{% url 'registration' %}" class="nav-link">Sign in</a>
                   </li>
+                  {% else %}
+                    <li>
+                      <p class="navbar-text">Hello, {{ request.user }}</p>
+                    </li>
+                    <li>
+                      <a href="{% url 'logout_action' %}">Logout</a>
+                    </li>
+                  {% endif %}
 
                   {% if request.user.is_authenticated %}
                   <li class="nav-item  navbar-right">
-                    <a href="#" class="nav-link">Profile</a>
+                    <a href="{% url 'user_detail' request.user %}" class="nav-link">Profile</a>
                   </li>
                   {% endif %}
 

@@ -7,6 +7,25 @@ class CommentForm(forms.Form):
 	
 	comment = forms.CharField(widget = forms.Textarea)
 
+class LoginForm(forms.Form):
+
+	username = forms.CharField()
+	password = forms.CharField(widget = forms.PasswordInput)
+
+	def clean(self):
+		username = self.cleaned_data['username']
+		password = self.cleaned_data['password']
+
+		if not User.objects.filter(username = username).exists():
+			raise forms.ValidationError('User with that username doesnt exist')
+
+		user = User.objects.get(username = username)
+		
+		if not user.check_password(password):
+			raise forms.ValidationError('Password is not right')
+
+		
+
 class RegisrationForm(forms.ModelForm): 
 
 	password = forms.CharField(widget = forms.PasswordInput)

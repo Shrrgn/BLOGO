@@ -70,4 +70,7 @@ class UserAccount(models.Model):
 		return self.nick.username
 
 	def full_name(self):
-		return f"{first_name} {last_name}"
+		return f"{self.first_name} {self.last_name}"
+
+	def get_absolute_url(self): #for difficult url
+		return reverse('user_detail', kwargs = {'user':self.nick.username})

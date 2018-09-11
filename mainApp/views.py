@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from mainApp.models import Category, Post, UserAccount
-from mainApp.forms import CommentForm, RegisrationForm
+from mainApp.forms import CommentForm, RegisrationForm, LoginForm
 from django.views.generic.base import View
 from django.http import JsonResponse, HttpResponseRedirect
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate, login, logout
 
 # Create your views here.
 
@@ -23,7 +23,7 @@ class CategoryListView(ListView):
 
 class CategoryDetailView(DetailView):
 	model = Category
-	template_name = 'category_detail.html'
+	template_name = 'mainApp/category_detail.html' # url((
 
 	def get_context_data(self, *args, **kwargs):
 		context = super(CategoryDetailView, self).get_context_data(*args, **kwargs)
@@ -126,12 +126,42 @@ class RegistrationView(View):
 		context = {'form':form}
 		return render(self.request, self.template_name, context)
 
-'''
-def contacts(request): # how to make it better?
-	return render(request, "mainApp/contacts.html", {'values':['Contact name: Harry Potter', 
-																'Address: Hogwarts Castle',
-																'Contact email: harrypotter@ukr.net']})
-'''
+class LoginView(View):
+
+	template_name = 'mainApp/login.html'
+
+	def get(self, request, *args, **kwargs):
+		form = LoginForm()
+		context = {'form':form}
+		return render(self.request, self.template_name, context)
+
+	def post(self, request, *args, **kwargs):
+		form = LoginForm(request.POST or None)
+		
+		if form.is_valid():
+			username = form.cleaned_data['username']
+			password = form.cleaned_data['password']
+			user = authenticate(username = username, password = password)
+
+			if user:
+				login(self.request, user) 
+				return HttpResponseRedirect('/')
+
+		context = {'form':form}
+		return render(self.request, self.template_name, context)
+
+
+class UserAccountView(View):
+
+	template_name = 'mainApp/user_detail.html'
+
+	def get(self, request, *args, **kwargs):
+		user = self.kwargs.get('user')
+		current_user = UserAccount.objects.get(nick = User.objects.get(username = user))
+		print(current_user.email)
+		context = {'current_user':current_user}
+		return render(self.request, self.template_name, context)
+
 
 class ContactsView(View):
 

@@ -1,0 +1,30 @@
+{% extends "mainApp/wrapper.html" %}
+
+{% block content %}
+	<div class="container-fluid well span6">
+	<div class="row-fluid">
+       
+        <div class="span8">
+            <h3>Username: {{ current_user.nick }}</h3>
+            <h3>Email: {{ current_user.email }}</h3>
+            <h3>Fullname: {{ current_user.full_name }}</h3>
+        </div>
+        
+        
+        <!--
+        <div class="span2">
+            <div class="btn-group">
+                <a class="btn dropdown-toggle btn-info" data-toggle="dropdown" href="#">
+                    Action 
+                    <span class="icon-cog icon-white"></span><span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#"><span class="icon-wrench"></span> Modify</a></li>
+                    <li><a href="#"><span class="icon-trash"></span> Delete</a></li>
+                </ul>
+            </div>
+        </div>
+    	-->
+</div>
+</div>
+{% endblock %}
