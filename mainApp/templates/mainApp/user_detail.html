@@ -13,7 +13,9 @@
             <ul>
             	{%  for favorite_post in current_user.favorite_posts.all %}
             		<li>
-            			<a href="{% url 'post_detail' favorite_post.slug %}">{{ favorite_post.title }}</a>
+            			<a href="{% url 'post_detail' favorite_post.category.slug favorite_post.slug %}">
+                            {{ favorite_post.title }}
+                        </a>
             		</li>
             	{% endfor %}
             </ul>

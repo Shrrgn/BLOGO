@@ -46,7 +46,7 @@ class Post(models.Model):
 		return self.text[:300] + '...'
 
 	def get_abdolute_url(self):
-		return reverse('post_detail', kwargs = {'slug' :self.slug})
+		return reverse('post_detail', kwargs = {'slug':self.slug, 'category':self.category.slug})
 
 class Comments(models.Model):
 	

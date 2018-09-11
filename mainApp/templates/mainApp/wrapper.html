@@ -28,40 +28,41 @@
                   <li class="nav-item">
                     <a href="/posts" class="nav-link">Posts</a>
                   </li>
-                  <!--
+                  
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="preview" href="#" role="button" aria-haspopup="true" aria-expanded="false">Categories</a>
                     <div class="dropdown-menu" aria-lableledby="preview">
                       {% for cat in categories%}
-                      <a class="dropdown-item" href="">{{ cat.name }}</a>
+                        <a class="dropdown-item" href="{% url 'category_detail' cat.slug %}">{{ cat.name }}</a>
                       {% endfor %}
                     </div>
                   </li>
-                  -->
+                  
                   <li class="nav-item">
                     <a href="/contacts" class="nav-link">Contact Us</a>
                   </li>
 
                   {% if not request.user.is_authenticated %}
-                  <li class="nav-item">
-                    <a href="{% url 'login_page' %}" class="nav-link">Login</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{% url 'registration' %}" class="nav-link">Sign in</a>
-                  </li>
+                    <li class="nav-item">
+                      <a href="{% url 'login_page' %}" class="nav-link">Login</a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{% url 'registration' %}" class="nav-link">Sign in</a>
+                    </li>
                   {% else %}
-                    <li>
-                      <p class="navbar-text">Hello, {{ request.user }}</p>
+                    <li class="nav-item">
+                      <a href="{% url 'logout_action' %}" class="nav-link" >Logout</a>
                     </li>
                     <li>
-                      <a href="{% url 'logout_action' %}">Logout</a>
+                      <p class="nav-item" style="color: yellow;">Hello, {{ request.user }}</p>
                     </li>
+                    
                   {% endif %}
 
                   {% if request.user.is_authenticated %}
-                  <li class="nav-item  navbar-right">
-                    <a href="{% url 'user_detail' request.user %}" class="nav-link">Profile</a>
-                  </li>
+                    <li class="nav-item  navbar-right">
+                      <a href="{% url 'user_detail' request.user %}" class="nav-link">Profile</a>
+                    </li>
                   {% endif %}
 
                 </ul>
@@ -85,12 +86,12 @@
                       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                           <!-- jinja should be here -->
                           {% block content %}
-                          <div class="section-title mb-0" align="center">
-                            <h2>Make your dreams come true</h2>
-                            <p>
-                              Our approach is very simple: we define your problem and give the best solution. 
-                            </p>
-                          </div>
+                            <div class="section-title mb-0" align="center">
+                              <h2>Make your dreams come true</h2>
+                              <p>
+                                Our approach is very simple: we define your problem and give the best solution. 
+                              </p>
+                            </div>
                           {% endblock %}
                           <!-- jinja should be here -->
                       </div>
@@ -98,6 +99,7 @@
               </div>
               <div class="row">
                   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 text-center">
+                    <br>
                     Created by @Shrrgn
                   </div>
               </div>

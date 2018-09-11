@@ -6,6 +6,7 @@ from mainApp.forms import CommentForm, RegisrationForm, LoginForm
 from django.views.generic.base import View
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth import get_user_model, authenticate, login, logout
+from mainApp.mixins import CategoryListMixin
 
 # Create your views here.
 
@@ -21,17 +22,17 @@ class CategoryListView(ListView):
 		context['categories'] = self.model.objects.all()
 		return context
 
-class CategoryDetailView(DetailView):
+class CategoryDetailView(DetailView, CategoryListMixin):
 	model = Category
 	template_name = 'mainApp/category_detail.html' # url((
 
 	def get_context_data(self, *args, **kwargs):
 		context = super(CategoryDetailView, self).get_context_data(*args, **kwargs)
-		context['categories'] = self.model.objects.all()
 		context['category'] = self.get_object()
+		context['posts'] = Post.objects.filter(category = self.get_object()).all()
 		return context
 
-class PostListView(ListView):
+class PostListView(ListView, CategoryListMixin):
 	model = Post
 	template_name = 'mainApp/posts.html'
 
@@ -67,7 +68,7 @@ class CreateCommentView(View):
 		new_comment = post.comments.create(author = request.user, comment = comment)
 		comment = [{'author':new_comment.author.username, 
 					'comment': new_comment.comment, 
-					'timestamp':new_comment.timestemap.strtime('%Y-%m-%d')}]
+					'timestamp':new_comment.timestamp}]
 
 		return JsonResponse(comment, safe = False)
 
@@ -162,7 +163,6 @@ class UserAccountView(View):
 	def get(self, request, *args, **kwargs):
 		user = self.kwargs.get('user')
 		current_user = UserAccount.objects.get(nick = User.objects.get(username = user))
-		print(current_user.favorite_posts.all())
 		context = {'current_user':current_user}
 		return render(self.request, self.template_name, context)
 

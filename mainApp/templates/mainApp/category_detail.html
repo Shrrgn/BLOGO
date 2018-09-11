@@ -1,6 +1,18 @@
 {% extends "mainApp/wrapper.html" %}
 
 {% block content %}
-	<!--category detail view-->
-	<h1>Nani???</h2>
+	<div class="container">
+		{% if posts %}
+			<h3>Posts by category {{ category.name }}:</h3>
+			<ul>
+				{%  for post in posts %}
+					<li>
+						<a href="{% url 'post_detail' post.category.slug post.slug %}">{{ post.title }}</a>
+					</li>
+				{%  endfor %}	
+			</ul>
+		{% else %}
+				<h4>Category doesn't have posts...</h4>
+		{%  endif %}
+	</div>
 {% endblock %}
