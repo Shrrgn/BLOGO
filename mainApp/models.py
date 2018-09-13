@@ -14,7 +14,7 @@ class Category(models.Model):
 	def __str__(self):
 		return self.name
 
-	def get_abdolute_url(self):
+	def get_absolute_url(self):
 		return reverse('category_detail', kwargs = {'slug' :self.slug})
 
 
@@ -45,7 +45,7 @@ class Post(models.Model):
 	def text_preview(self):
 		return self.text[:300] + '...'
 
-	def get_abdolute_url(self):
+	def get_absolute_url(self):
 		return reverse('post_detail', kwargs = {'slug':self.slug, 'category':self.category.slug})
 
 class Comments(models.Model):
