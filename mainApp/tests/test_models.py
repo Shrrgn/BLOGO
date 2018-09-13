@@ -53,15 +53,12 @@ class PostModelTests(TestCase):
 	
 	@classmethod
 	def setUpTestData(cls):
-		image_path = 'D:\\ZProgramming\\Python\\dj\\myblog\\static\\test_image.jpg'
-		new_image = SimpleUploadedFile(name = 'test_image.jpg',
-												content = open(image_path, 'rb').read(), content_type = 'image/jpg')
+		
 		Category.objects.create(name = 'Test category name', slug = 'test-category-name')
 		User.objects.create(username = 'shrrgn')
 		Post.objects.create(title = 'Test Post title',
 							slug = 'test-post-title',
 							text = 'Test text test for Post model',
-							image = new_image,
 							user = User.objects.get(id = 1),
 							category = Category.objects.get(id = 1))
 
@@ -103,6 +100,10 @@ class PostModelTests(TestCase):
 	def test_post_image(self):
 		field_label = self.post._meta.get_field('image').verbose_name
 		self.assertEquals(field_label, 'image')
+		image_path = 'D:\\ZProgramming\\Python\\dj\\myblog\\static\\test_image.jpg'
+		new_image = SimpleUploadedFile(name = 'test_image.jpg',
+												content = open(image_path, 'rb').read(), content_type = 'image/jpg')
+		self.post.image = new_image
 		#what i must do after i don't know----??????
 
 	def test_post_likes(self):
