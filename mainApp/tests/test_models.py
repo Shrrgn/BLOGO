@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from mainApp.models import Category, Post
+from mainApp.models import Category, Post, Comments, UserAccount
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile #for image
 from django.template.defaultfilters import slugify
@@ -52,16 +52,14 @@ class CategoryModelTests(TestCase):
 class PostModelTests(TestCase):
 	
 	@classmethod
-	def setUpTestData(cls):
-		
+	def setUpTestData(cls):		
 		Category.objects.create(name = 'Test category name', slug = 'test-category-name')
-		User.objects.create(username = 'shrrgn')
+		User.objects.create(username = 'shrrgn', email = 'restrsgds@gmail.com')
 		Post.objects.create(title = 'Test Post title',
 							slug = 'test-post-title',
 							text = 'Test text test for Post model',
 							user = User.objects.get(id = 1),
 							category = Category.objects.get(id = 1))
-
 
 	def setUp(self):
 		self.post = Post.objects.get(id = 1)
@@ -156,14 +154,23 @@ class PostModelTests(TestCase):
 	def test_post_reaction_functionality(self):
 		User.objects.create(username = 'poko')
 		User.objects.create(username = 'test')
+		
 		self.post.reaction.add(User.objects.get(id = 1))
 		self.post.reaction.add(User.objects.get(id = 2))
-
 		self.assertIn(User.objects.get(id = 1), self.post.reaction.all())
 		self.assertNotIn(User.objects.get(id = 3), self.post.reaction.all())
 	
 	def test_post_comments(self):
-		pass		
+		Comments.objects.create(author = User.objects.get(id = 1),
+								comment = 'Comment text for post',
+								object_id = Post.objects.get(id = 1).id,
+								content_object = Post.objects.get(id = 1))
+		field_label = self.post._meta.get_field('comments').verbose_name
+		self.post.comments_set = Comments.objects.get(id = 1)
+		
+		self.assertEquals(field_label, 'comments')
+		self.assertEquals(self.post.comments.get(id = 1).comment, 'Comment text for post')
+
 
 	def test_post_str_method(self):
 		self.assertEquals(self.post.title, str(self.post))
@@ -175,5 +182,118 @@ class PostModelTests(TestCase):
 		self.category = Category.objects.get(id = 1)
 		self.assertEquals(self.post.get_absolute_url(), f"/{self.category.slug}/{self.post.slug}/")
 
-	def test_something(self):
-		print('+==wow==+')
+
+class CommentsModelTests(TestCase):
+
+	@classmethod
+	def setUpTestData(cls):		
+		Category.objects.create(name = 'Test category name', slug = 'test-category-name')
+		User.objects.create(username = 'shrrgn')
+		Post.objects.create(title = 'Test Post title',
+							slug = 'test-post-title',
+							text = 'Test text test for Post model',
+							user = User.objects.get(id = 1),
+							category = Category.objects.get(id = 1))
+		Comments.objects.create(author = User.objects.get(id = 1),
+								comment = 'Comment text for post',
+								object_id = Post.objects.get(id = 1).id,
+								content_object = Post.objects.get(id = 1))
+
+	def setUp(self):
+		self.comments = Comments.objects.get(id = 1)
+
+	def test_comments_author(self):
+		field_label = self.comments._meta.get_field('author').verbose_name
+
+		self.assertEquals(field_label, 'author')
+		self.assertEquals(self.comments.author.username, 'shrrgn')
+
+	def test_comments_comment_field(self):
+		field_label = self.comments._meta.get_field('comment').verbose_name
+
+		self.assertEquals(field_label, 'comment')
+		self.assertEquals(self.comments._meta.get_field('comment').max_length, 140)
+		self.assertEquals(self.comments.comment, 'Comment text for post')
+
+	def test_comments_timestamp(self):
+		field_label = self.comments._meta.get_field('timestamp').verbose_name
+		now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S:%f")
+		
+		self.assertEquals(field_label, 'timestamp')
+		self.assertTrue(self.comments._meta.get_field('timestamp').auto_now_add)
+		self.assertFalse(self.comments._meta.get_field('timestamp').auto_now)
+		self.assertGreater(now, self.comments.timestamp.strftime("%Y-%m-%d %H:%M:%S:%f"))
+
+	def test_comments_object_id(self):
+		field_label = self.comments._meta.get_field('object_id').verbose_name
+
+		self.assertEquals(field_label, 'object_id'.replace('_', ' '))
+		self.assertGreater(self.comments.object_id, 0)
+		self.assertEquals(self.comments.object_id, 1) #is it right???
+
+	def test_comments_content_object(self):
+		self.assertEquals(self.comments.content_object, Post.objects.get(id = 1))
+
+	def test_comments_content_type(self):
+		#i don't know
+		pass
+
+class UserAccountModelTests(TestCase):
+
+	@classmethod
+	def setUpTestData(cls):
+		Category.objects.create(name = 'Test category name', slug = 'test-category-name')
+		User.objects.create(username = 'shrrgn')
+		Post.objects.create(title = 'Test Post title',
+							slug = 'test-post-title',
+							text = 'Test text test for Post model',
+							user = User.objects.get(id = 1),
+							category = Category.objects.get(id = 1))
+		UserAccount.objects.create(nick = User.objects.get(id = 1),
+									first_name = 'Lola',
+									last_name = 'Ley',
+									email = 'sdfsdf@i.ua')
+
+	def setUp(self):
+		self.user_account = UserAccount.objects.get(id = 1)
+
+	def test_user_account_nick(self):
+		field_label = self.user_account._meta.get_field('nick').verbose_name
+
+		self.assertEquals(field_label, 'nick')
+		self.assertEquals(self.user_account.nick.username, 'shrrgn')
+
+	def test_user_account_first_name(self):
+		field_label = self.user_account._meta.get_field('first_name').verbose_name
+
+		self.assertEquals(field_label, 'first_name'.replace('_', ' '))
+		#self.assertEquals(self.user_account._meta.get_field('first_name').max_length, 20) something wrongg
+		self.assertEquals(self.user_account.first_name, 'Lola')
+
+	def test_user_account_last_name(self):
+		field_label = self.user_account._meta.get_field('last_name').verbose_name
+
+		self.assertEquals(field_label, 'last_name'.replace('_', ' '))
+		self.assertEquals(self.user_account.last_name, 'Ley')
+
+	def test_user_account_email(self):
+		field_label = self.user_account._meta.get_field('email').verbose_name
+
+		self.assertEquals(field_label, 'email')
+		self.assertEquals(self.user_account.email, 'sdfsdf@i.ua')
+
+	def test_user_account_favorite_posts(self):
+		self.user_account.favorite_posts.add(Post.objects.get(id = 1))
+		field_label = self.user_account._meta.get_field('favorite_posts').verbose_name
+
+		self.assertEquals(field_label, 'favorite_posts'.replace('_', ' '))
+		self.assertEquals(self.user_account.favorite_posts.all()[0], Post.objects.get(id = 1))
+
+	def test_user_account_str_method(self):
+		self.assertEquals(str(self.user_account), self.user_account.nick.username)
+
+	def test_user_account_full_name(self):
+		self.assertEquals(self.user_account.full_name(), f"{self.user_account.first_name} {self.user_account.last_name}")
+
+	def test_user_account_get_absolute_url(self):
+		self.assertEquals(self.user_account.get_absolute_url(), f"/u/{self.user_account.nick.username}/")

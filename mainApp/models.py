@@ -48,6 +48,9 @@ class Post(models.Model):
 	def get_absolute_url(self):
 		return reverse('post_detail', kwargs = {'slug':self.slug, 'category':self.category.slug})
 
+	#def __eq__(self, other):
+	#	return self.title == other.title and self.text == other.text
+
 class Comments(models.Model):
 	
 	author = models.ForeignKey('auth.User', on_delete = models.CASCADE)
