@@ -7,6 +7,7 @@ from django.views.generic.base import View
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from mainApp.mixins import CategoryListMixin
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 # Create your views here.
 
@@ -38,7 +39,12 @@ class PostListView(ListView, CategoryListMixin):
 
 	def get_context_data(self, *args, **kwargs):
 		context = super(PostListView, self).get_context_data(*args, **kwargs)
-		context['posts'] = self.model.objects.all()
+		#context['posts'] = self.model.objects.all()
+		post_list = self.model.objects.all()
+		paginator = Paginator(post_list, 3)
+		page = self.request.GET.get('page')
+		posts = paginator.get_page(page)
+		context['posts'] = posts
 		return context
 
 class PostDetailView(DetailView):

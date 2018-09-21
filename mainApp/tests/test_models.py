@@ -202,6 +202,9 @@ class CommentsModelTests(TestCase):
 	def setUp(self):
 		self.comments = Comments.objects.get(id = 1)
 
+	def test_comments_instance(self):
+		self.assertIsInstance(self.comments, Comments)
+
 	def test_comments_author(self):
 		field_label = self.comments._meta.get_field('author').verbose_name
 
@@ -256,6 +259,9 @@ class UserAccountModelTests(TestCase):
 
 	def setUp(self):
 		self.user_account = UserAccount.objects.get(id = 1)
+
+	def test_user_account_instance(self):
+		self.assertIsInstance(self.user_account, UserAccount)
 
 	def test_user_account_nick(self):
 		field_label = self.user_account._meta.get_field('nick').verbose_name
